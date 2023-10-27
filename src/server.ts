@@ -1,5 +1,3 @@
-console.log("i am working");
-
 import config from "config";
 import connectDB from "./db/connect";
 import express from "express";
@@ -10,6 +8,9 @@ import morgan from "morgan";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { Request, Response, NextFunction } from "express";
+import notesRoutes from "./routes/notes";
+import userRoutes from "./routes/users";
+import { requiresAuth } from "./middleware/auth";
 
 const app = express();
 
@@ -47,6 +48,9 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
     errorMessage = error.message;
   }
 });
+
+app.use("/api/users", userRoutes);
+app.use("/api/notes", requiresAuth, notesRoutes);
 
 const start = async () => {
   try {
